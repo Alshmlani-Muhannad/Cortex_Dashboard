@@ -1,0 +1,66 @@
+# =============================================================================
+# Cortex XDR AI-Powered SOC Dashboard — .gitignore
+# Files/dirs below are intentionally excluded from GitHub uploads.
+# =============================================================================
+
+# --- Environment / secrets (NEVER commit real .env) ---
+.env
+.env.local
+.env.*.local
+
+# --- Python ---
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+.venv/
+env/
+.env/
+pip-log.txt
+pip-delete-this-directory.txt
+.tox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+.pytest_cache/
+.pytest_cache/
+.tox/*
+
+# --- Node / Frontend ---
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+dist/
+build/
+.next/
+*.tsbuildinfo
+.vite/
+
+# --- IDE / Editors ---
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# --- Docker ---
+.dockerignore
+docker-compose.override.yml
+
+# --- Alembic / database ---
+alembic/versions/*.py  # keep the env.py, ignore auto-generated migrations if desired
+*.db
+*.sqlite3
+
+# --- OS ---
+.DS_Store
+Thumbs.db

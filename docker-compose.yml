@@ -1,0 +1,76 @@
+version: "3.8"
+
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: soc
+      POSTGRES_PASSWORD: socpassword
+      POSTGRES_DB: socdb
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U soc -d socdb"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      - ENVIRONMENT=development
+      - DEBUG=true
+      - DATABASE_URL=postgresql+psycopg2://soc:socpassword@db:5432/socdb
+      - CORTEX_TENANT_FQDN=${CORTEX_TENANT_FQDN:-}
+      - CORTEX_API_KEY_ID=${CORTEX_API_KEY_ID:-}
+      - CORTEX_API_KEY=${CORTEX_API_KEY:-}
+      - CORTEX_API_VERSION=v1
+      - CORTEX_SYNC_INTERVAL_SECONDS=${CORTEX_SYNC_INTERVAL_SECONDS:-300}
+      - CORTEX_DEMO_MODE=${CORTEX_DEMO_MODE:-false}
+      - AI_PROVIDER=${AI_PROVIDER:-openai}
+      - AI_MODEL=${AI_MODEL:-gpt-4o-mini}
+      - AI_BASE_URL=${AI_BASE_URL:-}
+      - AI_API_KEY=${AI_API_KEY:-}
+      - AI_ENABLED=true
+      - AI_DEMO_MODE=${AI_DEMO_MODE:-false}
+      - SECRET_KEY=${SECRET_KEY:-dev-secret-change-me}
+      - FRONTEND_ORIGIN=http://localhost:5173
+      - BACKEND_CORS_ORIGINS=http://localhost:5173
+    ports:
+      - "8000:8000"
+    command: sh -c "alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port 8000"
+
+  worker:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      - DATABASE_URL=postgresql+psycopg2://soc:socpassword@db:5432/socdb
+      - CORTEX_TENANT_FQDN=${CORTEX_TENANT_FQDN:-}
+      - CORTEX_API_KEY_ID=${CORTEX_API_KEY_ID:-}
+      - CORTEX_API_KEY=${CORTEX_API_KEY:-}
+      - CORTEX_SYNC_INTERVAL_SECONDS=${CORTEX_SYNC_INTERVAL_SECONDS:-300}
+      - CORTEX_DEMO_MODE=${CORTEX_DEMO_MODE:-false}
+    command: sh -c "alembic upgrade head && python -m app.worker.sync_worker"
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    depends_on:
+      - backend
+    ports:
+      - "5173:80"
+
+volumes:
+  pgdata:

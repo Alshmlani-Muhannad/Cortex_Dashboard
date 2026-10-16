@@ -1,0 +1,67 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --soc-bg: #0b1015;
+    --soc-panel: #111827;
+    --soc-border: #1f2937;
+    --soc-accent: #22d3ee;
+  }
+  html { scroll-behavior: smooth; }
+  body { @apply bg-soc-dark text-gray-100 selection:bg-cyan-500/30; }
+}
+
+@layer components {
+  .soc-panel {
+    @apply bg-soc-panel border border-soc-border rounded-xl;
+  }
+  .soc-card {
+    @apply soc-panel p-5;
+  }
+  .soc-input {
+    @apply w-full bg-soc-dark border border-soc-border rounded px-3 py-2 text-gray-100 focus:outline-none focus:border-soc-accent focus:ring-1 focus:ring-soc-accent transition;
+  }
+  .soc-btn {
+    @apply inline-flex items-center justify-center gap-2 px-4 py-2 rounded text-sm font-medium transition disabled:opacity-50 disabled:pointer-events-none;
+  }
+  .soc-btn-primary {
+    @apply soc-btn bg-soc-accent text-soc-dark hover:bg-cyan-400;
+  }
+  .soc-btn-ghost {
+    @apply soc-btn bg-transparent text-gray-300 hover:bg-soc-border hover:text-white;
+  }
+  .soc-btn-danger {
+    @apply soc-btn bg-red-900/20 text-red-400 border border-red-900/30 hover:bg-red-900/40;
+  }
+  .badge {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded text-xs font-semibold leading-none;
+  }
+  .badge-severity-critical { @apply badge bg-red-900/30 text-red-400 border border-red-900/40; }
+  .badge-severity-high { @apply badge bg-orange-900/30 text-orange-400 border border-orange-900/40; }
+  .badge-severity-medium { @apply badge bg-amber-900/30 text-amber-400 border border-amber-900/40; }
+  .badge-severity-low { @apply badge bg-blue-900/30 text-blue-400 border border-blue-900/40; }
+  .badge-severity-info { @apply badge bg-slate-900/30 text-slate-400 border border-slate-900/40; }
+  .badge-status-open { @apply badge bg-red-900/30 text-red-400 border border-red-900/40; }
+  .badge-status-closed { @apply badge bg-green-900/30 text-green-400 border border-green-900/40; }
+  .table-wrap {
+    @apply overflow-x-auto;
+  }
+  table.soc-table {
+    @apply w-full text-sm text-left border-collapse;
+  }
+  table.soc-table th {
+    @apply bg-soc-panel/50 text-gray-400 uppercase text-xs tracking-wider px-4 py-3 border-b border-soc-border font-medium;
+  }
+  table.soc-table td {
+    @apply px-4 py-3 border-b border-soc-border/50 text-gray-300 align-middle;
+  }
+  table.soc-table tr:hover td {
+    @apply bg-white/5;
+  }
+}
+
+html[dir="rtl"] {
+  table.soc-table th, table.soc-table td { text-align: right; }
+}
